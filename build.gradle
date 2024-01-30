@@ -3,6 +3,7 @@ plugins {
     id 'application'
     id 'com.github.johnrengelman.shadow' version '7.1.2'
     // TODO add jacoco
+    id 'jacoco'
 }
 
 group 'com.example.helloworld'
@@ -27,6 +28,7 @@ dependencies {
 
 test {
     useJUnitPlatform()
+    finalizedBy jacocoTestReport
 }
 
 shadowJar {
@@ -39,5 +41,21 @@ shadowJar {
 }
 
 // TODO Specify Jacoco version
+jacoco {
+    toolVersion = "0.8.7"
+}
 
 // TODO Configure Jacoco
+jacoco {
+    reportsDirectory = layout.buildDirectory.dir('MyReports')
+}
+
+jacocoTestReport {
+// example exclusions
+    def exclusions = ['com/math/Statistics**', "com/array/ArrayHelper**"]
+    afterEvaluate {
+        classDirectories.setFrom(files(classDirectories.files.collect {
+            fileTree(dir: it).exclude(exclusions)
+        }))
+    }
+}
